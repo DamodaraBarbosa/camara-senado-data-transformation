@@ -1,13 +1,34 @@
 # Environment
 .venv/
-venv
+venv/
+.env/
 env/
 
 # dbt
+profiles.yml
+profiles.yml.template
 dbt_packages/
 target/
+dbt_project.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
-EOF
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
