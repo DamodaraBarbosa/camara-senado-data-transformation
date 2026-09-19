@@ -1,7 +1,7 @@
 # Environment
+.env
 .venv/
 venv/
-.env/
 env/
 
 # dbt
@@ -32,4 +32,3 @@ build/
 
 # Logs
 *.log
-profiles.yml
