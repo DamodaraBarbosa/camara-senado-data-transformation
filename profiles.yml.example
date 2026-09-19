@@ -1,0 +1,40 @@
+# DBT Athena Profile Configuration
+#
+# HOW TO USE:
+# 1. Copy this file to profiles.yml: cp profiles.yml.example profiles.yml
+# 2. Load environment variables: source .env
+# 3. Run dbt: dbt debug
+#
+# NOTE: profiles.yml is gitignored for security - keep your real credentials there only locally
+
+camara-senado-data-transformation:
+  target: "{{ env_var('DBT_DEFAULT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: athena
+      # Glue Catalog name (usually AwsDataCatalog)
+      catalog: "{{ env_var('DEV_CATALOG_NAME') }}"
+      # Glue database name - options: dataplatform-senado-dev-db-raw, -staging, -intermediate, -marts
+      database: "{{ env_var('DEV_SCHEMA_NAME') }}"
+      # S3 path for Athena query results
+      s3_staging_dir: "{{ env_var('DEV_S3_STAGING_DIR') }}"
+      # AWS region
+      region_name: "{{ env_var('DEV_REGION') }}"
+      # Athena workgroup name
+      workgroup: "{{ env_var('DEV_WORKGROUP') }}"
+      # Athena has limited ANSI support - keep false
+      ansi_mode: false
+      # Number of parallel threads
+      threads: 16
+      # Query timeout in seconds
+      timeout_seconds: 300
+
+    prod:
+      type: athena
+      catalog: "{{ env_var('PROD_CATALOG_NAME') }}"
+      database: "{{ env_var('PROD_SCHEMA_NAME') }}"
+      s3_staging_dir: "{{ env_var('PROD_S3_STAGING_DIR') }}"
+      region_name: "{{ env_var('PROD_REGION') }}"
+      workgroup: "{{ env_var('PROD_WORKGROUP') }}"
+      threads: 16
+      timeout_seconds: 300
