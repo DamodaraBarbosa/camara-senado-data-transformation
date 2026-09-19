@@ -1,7 +1,7 @@
 # Environment
+.env
 .venv/
 venv/
-.env/
 env/
 
 # dbt
