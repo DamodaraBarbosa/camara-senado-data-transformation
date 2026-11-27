@@ -23,12 +23,13 @@
           {% do run_query('DROP TABLE IF EXISTS ' ~ relation) %}
         {% endif %}
 
+        {% set is_text = (src.meta or {}).get('format') == 'text' %}
         {% set ddl %}
 CREATE EXTERNAL TABLE IF NOT EXISTS {{ relation }} (
   {{ cols | join(',\n  ') }}
 )
 PARTITIONED BY (`ingestion_date` string)
-ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
+{% if is_text %}ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001'{% else %}ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'{% endif %}
 LOCATION '{{ location }}'
 TBLPROPERTIES (
   'projection.enabled'='true',

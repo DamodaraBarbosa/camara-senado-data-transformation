@@ -91,7 +91,10 @@ dbt run-operation create_raw_tables --args '{select: votacoes__votacoes}'   # um
 - O bucket é derivado do target (macro `raw_bucket()` → `dataplatform-camara-<target>-db`).
 - `python scripts/infer_columns.py amostra.json` gera um rascunho de colunas; revise antes de commitar.
 - `python scripts/check_sources.py` valida `raw.yml` contra o manifesto (`--allow-missing` durante a migração por bundle).
-- Migradas até agora: `votacoes__votacoes`.
+- Todas as 60 tabelas do manifesto estão declaradas em `raw.yml`; o CI exige correspondência total.
+- Colunas que são array na API ficam como `string` (JSON texto): use `json_parse`/`try_cast` no staging. O SerDe devolve as chaves internas em minúsculas.
+- `orgaos__codigo_situacao` e `orgaos__situacoes_orgao` gravam um único array JSON por arquivo (não NDJSON). Elas usam `meta: {format: text}` e uma coluna `payload` com a linha inteira; faça `json_parse(payload)` no staging. Idealmente a ingestão passaria a gravar NDJSON.
+- `deputados__discursos`, `__eventos`, `__historico` e `__mandatos_externos` não tinham dados na migração: as colunas vêm da documentação da API (tudo `string`, exceto ids) e devem ser revalidadas com `infer_columns.py` quando houver dados.
 
 ---
 
