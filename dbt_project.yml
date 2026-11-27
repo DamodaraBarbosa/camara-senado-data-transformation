@@ -31,108 +31,49 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 # Models organized by subject (assunto) → then by layer (staging, intermediate, marts)
 # Tags are defined at the model level (subject), not at the layer level
+# All layers materialized as tables
 models:
   camara_senado_data_transformation:
-    # Default: views
-    materialized: view
+    # Default: tables for all layers
+    materialized: table
 
     camara:
       # Votações models
       votacoes:
         +tags: ["camara", "votacoes"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Frentes models
       frentes:
         +tags: ["camara", "frentes"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Deputados models
       deputados:
         +tags: ["camara", "deputados"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Blocos models
       blocos:
         +tags: ["camara", "blocos"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Eventos models
       eventos:
         +tags: ["camara", "eventos"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Grupos models
       grupos:
         +tags: ["camara", "grupos"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Legislaturas models
       legislaturas:
         +tags: ["camara", "legislaturas"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Órgãos models
       orgaos:
         +tags: ["camara", "orgaos"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Partidos models
       partidos:
         +tags: ["camara", "partidos"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
 
       # Proposições models
       proposicoes:
         +tags: ["camara", "proposicoes"]
-        staging:
-          materialized: view
-        intermediate:
-          materialized: table
-        marts:
-          materialized: table
