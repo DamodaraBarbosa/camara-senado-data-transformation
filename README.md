@@ -97,13 +97,17 @@ dbt run-operation create_raw_tables --args '{select: votacoes__votacoes}'   # um
 
 ## ⚙️ Configuração de Ambientes
 
+Variáveis em `.env` (gitignored): `DBT_DEFAULT_TARGET`, `DEV_BUCKET`, `PROD_BUCKET` (e opcionalmente `*_REGION`, `*_WORKGROUP`).
+
 ### DEV (padrão)
-- Database: `dataplatform-senado-dev-db-raw`
-- S3: `s3://dataplatform-senado-dev-db/athena-results/`
+- Bucket: `dataplatform-camara-dev-db`
+- Databases: `dataplatform-camara-dev-db-{raw,staging,intermediate,marts}`
 
 ### PROD
-- Database: `dataplatform-senado-prod-db-raw`
-- S3: `s3://dataplatform-senado-prod-db/athena-results/`
+- Bucket: `dataplatform-camara-prod-db`
+- Databases: `dataplatform-camara-prod-db-{raw,staging,intermediate,marts}`
+
+O schema padrão do target é o database `-staging`. `create_raw_tables` faz `DROP`/`CREATE` de tabelas: confira o target antes de rodar.
 
 **Para alternar ambiente:**
 ```bash
@@ -135,7 +139,7 @@ dbt run --select model_name
 
 ### Executar com Tag
 ```bash
-dbt run --select tag:staging
+dbt run --select tag:votacoes
 ```
 
 ### Executar Tests
@@ -191,7 +195,7 @@ Cada modelo pode ser materializado em um database diferente usando:
 
 ```sql
 {{ config(
-    database='dataplatform-senado-dev-db-staging',
+    schema='dataplatform-camara-dev-db-intermediate',
     materialized='table'
 ) }}
 
@@ -204,7 +208,7 @@ SELECT * FROM ...
 
 1. **ANSI Mode Desativado**: Athena tem suporte limitado a ANSI SQL - já está desativado em `profiles.yml`
 2. **Custos**: Athena cobra por bytes escaneados - otimize suas queries
-3. **S3 Staging Dir**: Certificar que a pasta `s3://dataplatform-senado-dev-db/athena-results/` existe
+3. **S3 Staging Dir**: Certificar que a pasta `s3://<bucket>/athena-results/` existe
 4. **Credentials**: Nunca fazer commit de `profiles.yml` ou `.env` - já estão em `.gitignore`
 
 ---
@@ -220,10 +224,9 @@ SELECT * FROM ...
 
 ## 🤝 Próximos Passos
 
-1. Criar primeira model em `models/staging/stg_<entidade>.sql`
-2. Executar com `dbt run`
-3. Verificar resultados em `s3://dataplatform-senado-dev-db/athena-results/`
-4. Adicionar testes em `tests/`
+1. Migrar os demais bundles para `models/sources/raw.yml` (um por PR) e criar seus `stg_*`
+2. Remover `--allow-missing` do CI ao concluir
+3. Configurar `+schema` de intermediate e marts quando houver modelos
 
 ---
 
