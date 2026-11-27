@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: stg_votacoes
+    description: "Votações da Câmara (snapshot do arquivo mais recente da raw)."
+    columns:
+      - name: votacao_id
+        tests:
+          - unique
+          - not_null
