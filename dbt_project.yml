@@ -1,0 +1,79 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'camara_senado_data_transformation'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'camara-senado-data-transformation'
+
+# These configurations specify where dbt should look for different types of files.
+# The `source-paths` and `target-path` are configs that partially define
+# a dbt project's structure, in this case, a dbt project will place its files
+# in this directory. You may customize these configs so that dbt will read
+# non-standard directories.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# Models organized by subject (assunto) → then by layer (staging, intermediate, marts)
+# Tags are defined at the model level (subject), not at the layer level
+# All layers materialized as tables
+models:
+  camara_senado_data_transformation:
+    # Default: tables for all layers
+    materialized: table
+
+    camara:
+      # Votações models
+      votacoes:
+        +tags: ["camara", "votacoes"]
+
+      # Frentes models
+      frentes:
+        +tags: ["camara", "frentes"]
+
+      # Deputados models
+      deputados:
+        +tags: ["camara", "deputados"]
+
+      # Blocos models
+      blocos:
+        +tags: ["camara", "blocos"]
+
+      # Eventos models
+      eventos:
+        +tags: ["camara", "eventos"]
+
+      # Grupos models
+      grupos:
+        +tags: ["camara", "grupos"]
+
+      # Legislaturas models
+      legislaturas:
+        +tags: ["camara", "legislaturas"]
+
+      # Órgãos models
+      orgaos:
+        +tags: ["camara", "orgaos"]
+
+      # Partidos models
+      partidos:
+        +tags: ["camara", "partidos"]
+
+      # Proposições models
+      proposicoes:
+        +tags: ["camara", "proposicoes"]

@@ -9,7 +9,6 @@ profiles.yml
 profiles.yml.template
 dbt_packages/
 target/
-dbt_project.yml
 
 # IDE
 .vscode/
