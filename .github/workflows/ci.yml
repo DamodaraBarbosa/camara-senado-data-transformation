@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+  schedule:
+    # Semanal, com folga após a ingestão de prod (domingo 06:00 UTC); sem create_raw_tables
+    - cron: "0 14 * * 0"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  DEV_BUCKET: dataplatform-camara-dev-db
+  PROD_BUCKET: dataplatform-camara-prod-db
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python scripts/check_sources.py --allow-missing
+      - run: cp profiles.yml.example profiles.yml && dbt parse
+        env:
+          DBT_DEFAULT_TARGET: dev
+
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    env:
+      DBT_DEFAULT_TARGET: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ github.ref_name == 'main' && vars.AWS_ROLE_ARN_PROD || vars.AWS_ROLE_ARN_DEV }}
+      - run: cp profiles.yml.example profiles.yml
+      - name: Criar tabelas raw (apenas em merge)
+        if: github.event_name == 'push'
+        run: dbt run-operation create_raw_tables
+      - run: dbt build

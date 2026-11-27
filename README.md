@@ -51,14 +51,10 @@ Você deve ver uma mensagem de sucesso indicando que a conexão com Athena está
 │       │   ├── staging/
 │       │   ├── intermediate/
 │       │   └── marts/
-│       ├── deputados/
-│       │   ├── staging/
-│       │   ├── intermediate/
-│       │   └── marts/
-│       └── despesas/
-│           ├── staging/
-│           ├── intermediate/
-│           └── marts/
+│       └── deputados/ ... (10 assuntos, mesma estrutura)
+├── models/sources/raw.yml               → Declaração das tabelas raw (colunas e tipos)
+├── catalog/raw_tables.json              → Manifesto das tabelas raw (cópia do repo de ingestão)
+├── scripts/                             → check_sources.py, infer_columns.py
 ├── tests/                               → Testes de qualidade de dados
 ├── seeds/                               → Dados estáticos (CSVs)
 ├── macros/                              → Macros e funções reutilizáveis
@@ -71,19 +67,47 @@ Você deve ver uma mensagem de sucesso indicando que a conexão com Athena está
 
 **Lógica de organização:**
 - **Por Assunto (Subject)**: 10 temas (blocos, deputados, eventos, frentes, grupos, legislaturas, orgaos, partidos, proposicoes, votacoes)
-- **Por Layer**: staging (views) → intermediate (tables) → marts (tabelas finais)
+- **Por Layer**: staging → intermediate → marts (todas materializadas como table)
+
+---
+
+## 🧊 Catálogo Glue da camada raw
+
+O repositório dbt cria e versiona as tabelas Glue de `raw/` (tabelas externas JSON com *partition projection* por `ingestion_date`). A ingestão não tem etapa de catálogo.
+
+```bash
+# Cria/recria as tabelas raw declaradas em models/sources/raw.yml (DROP + CREATE; só metadado)
+dbt run-operation create_raw_tables                                 # todas
+dbt run-operation create_raw_tables --args '{select: votacoes__votacoes}'   # uma
+```
+
+| Evento | Ação |
+|---|---|
+| Nova ingestão semanal (partição nova) | Nenhuma (partition projection) |
+| Extractor novo/removido | Atualizar `catalog/raw_tables.json` e `raw.yml` |
+| Coluna nova/removida/tipo alterado | Atualizar `raw.yml` e rodar `create_raw_tables` |
+
+- Nome da tabela: `{bundle}__{name}`; dados em `raw/{bundle}/{name}/ingestion_date=YYYY-MM-DD/*.json` (NDJSON).
+- O bucket é derivado do target (macro `raw_bucket()` → `dataplatform-camara-<target>-db`).
+- `python scripts/infer_columns.py amostra.json` gera um rascunho de colunas; revise antes de commitar.
+- `python scripts/check_sources.py` valida `raw.yml` contra o manifesto (`--allow-missing` durante a migração por bundle).
+- Migradas até agora: `votacoes__votacoes`.
 
 ---
 
 ## ⚙️ Configuração de Ambientes
 
+Variáveis em `.env` (gitignored): `DBT_DEFAULT_TARGET`, `DEV_BUCKET`, `PROD_BUCKET` (e opcionalmente `*_REGION`, `*_WORKGROUP`).
+
 ### DEV (padrão)
-- Database: `dataplatform-senado-dev-db-raw`
-- S3: `s3://dataplatform-senado-dev-db/athena-results/`
+- Bucket: `dataplatform-camara-dev-db`
+- Databases: `dataplatform-camara-dev-db-{raw,staging,intermediate,marts}`
 
 ### PROD
-- Database: `dataplatform-senado-prod-db-raw`
-- S3: `s3://dataplatform-senado-prod-db/athena-results/`
+- Bucket: `dataplatform-camara-prod-db`
+- Databases: `dataplatform-camara-prod-db-{raw,staging,intermediate,marts}`
+
+O schema padrão do target é o database `-staging`. `create_raw_tables` faz `DROP`/`CREATE` de tabelas: confira o target antes de rodar.
 
 **Para alternar ambiente:**
 ```bash
@@ -115,7 +139,7 @@ dbt run --select model_name
 
 ### Executar com Tag
 ```bash
-dbt run --select tag:staging
+dbt run --select tag:votacoes
 ```
 
 ### Executar Tests
@@ -171,7 +195,7 @@ Cada modelo pode ser materializado em um database diferente usando:
 
 ```sql
 {{ config(
-    database='dataplatform-senado-dev-db-staging',
+    schema='dataplatform-camara-dev-db-intermediate',
     materialized='table'
 ) }}
 
@@ -184,7 +208,7 @@ SELECT * FROM ...
 
 1. **ANSI Mode Desativado**: Athena tem suporte limitado a ANSI SQL - já está desativado em `profiles.yml`
 2. **Custos**: Athena cobra por bytes escaneados - otimize suas queries
-3. **S3 Staging Dir**: Certificar que a pasta `s3://dataplatform-senado-dev-db/athena-results/` existe
+3. **S3 Staging Dir**: Certificar que a pasta `s3://<bucket>/athena-results/` existe
 4. **Credentials**: Nunca fazer commit de `profiles.yml` ou `.env` - já estão em `.gitignore`
 
 ---
@@ -200,10 +224,9 @@ SELECT * FROM ...
 
 ## 🤝 Próximos Passos
 
-1. Criar primeira model em `models/staging/stg_<entidade>.sql`
-2. Executar com `dbt run`
-3. Verificar resultados em `s3://dataplatform-senado-dev-db/athena-results/`
-4. Adicionar testes em `tests/`
+1. Migrar os demais bundles para `models/sources/raw.yml` (um por PR) e criar seus `stg_*`
+2. Remover `--allow-missing` do CI ao concluir
+3. Configurar `+schema` de intermediate e marts quando houver modelos
 
 ---
 
