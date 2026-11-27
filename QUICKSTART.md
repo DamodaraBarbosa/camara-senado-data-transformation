@@ -31,24 +31,28 @@ dbt ls
 ## 📝 Criar Sua Primeira Model
 
 ### Passo 1: Criar arquivo SQL
-Crie um arquivo em `models/staging/stg_<tabela>.sql`:
+Crie um arquivo em `models/camara/<assunto>/staging/stg_<tabela>.sql`:
+
+**Exemplo: `models/camara/deputados/staging/stg_deputados.sql`**
 
 ```sql
 {{ config(
     materialized='view',
-    tags=['staging']
+    tags=['staging', 'deputados']
 ) }}
 
 SELECT
     id,
     nome,
     created_at
-FROM {{ source('raw', 'minha_tabela') }}
+FROM {{ source('raw', 'deputados') }}
 ```
 
 ### Passo 2: Executar dbt
 ```bash
-dbt run --select stg_minha_tabela
+dbt run --select stg_deputados
+# Ou executar por assunto
+dbt run --select tag:deputados
 ```
 
 ### Passo 3: Verificar Resultado
@@ -76,12 +80,18 @@ aws s3 ls s3://dataplatform-senado-dev-db/athena-results/
 
 ```
 models/
-  ├── staging/       → Views de transformações iniciais
-  ├── intermediate/  → Tables de transformações intermediárias
-  └── marts/         → Tables finais de negócio (fatos e dimensões)
-tests/               → Testes de qualidade (SQL e dbt)
-seeds/               → Arquivos CSV estáticos
-macros/              → Funções e helpers reutilizáveis
+  └── camara/
+      ├── votacoes/
+      │   ├── staging/       → Views de transformações iniciais
+      │   ├── intermediate/  → Tables de transformações intermediárias
+      │   └── marts/         → Tables finais (fatos e dimensões)
+      ├── frentes/
+      ├── deputados/
+      └── despesas/
+           (mesma estrutura para cada assunto)
+tests/                       → Testes de qualidade (SQL e dbt)
+seeds/                       → Arquivos CSV estáticos
+macros/                      → Funções e helpers reutilizáveis
 ```
 
 ---
@@ -121,13 +131,13 @@ dbt run
 
 ## 📚 Exemplo de Model Completa
 
-**Arquivo: `models/marts/fato_votos.sql`**
+**Arquivo: `models/camara/votacoes/marts/fato_votos.sql`**
 
 ```sql
 {{ config(
     materialized='table',
     database='dataplatform-senado-dev-db-marts',
-    tags=['marts']
+    tags=['marts', 'votacoes']
 ) }}
 
 SELECT
@@ -137,8 +147,25 @@ SELECT
     id_proposicao,
     voto,
     COUNT(*) as qtd_votos
-FROM {{ ref('stg_votos') }}
+FROM {{ ref('int_votos_agregados') }}
 GROUP BY 1, 2, 3, 4, 5
+```
+
+**Arquivo: `models/camara/votacoes/intermediate/int_votos_agregados.sql`**
+
+```sql
+{{ config(
+    materialized='table',
+    tags=['intermediate', 'votacoes']
+) }}
+
+SELECT
+    data_voto,
+    id_deputado,
+    id_proposicao,
+    voto
+FROM {{ ref('stg_votos') }}
+WHERE data_voto >= CAST('2020-01-01' AS DATE)
 ```
 
 ---

@@ -152,6 +152,30 @@ aws s3 ls s3://dataplatform-senado-dev-db/athena-results/
 
 ---
 
+## 📂 Estrutura de Modelos
+
+Os modelos estão organizados por **assunto (subject)** e depois por **layer**:
+
+```
+models/camara/
+├── votacoes/
+│   ├── staging/       → Transformações iniciais (views)
+│   ├── intermediate/  → Transformações intermediárias (tables)
+│   └── marts/         → Tabelas finais - fatos e dimensões
+├── frentes/           → Modelos de frentes parlamentares
+├── deputados/         → Modelos de deputados
+└── despesas/          → Modelos de despesas
+```
+
+**Executar por assunto:**
+```bash
+dbt run --select tag:votacoes
+dbt run --select tag:deputados
+dbt test --select tag:frentes
+```
+
+---
+
 ## 📚 Referências Úteis
 
 - [dbt Athena Community Adapter](https://github.com/dbt-labs/dbt-athena)

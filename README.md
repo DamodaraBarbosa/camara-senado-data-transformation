@@ -42,18 +42,36 @@ Você deve ver uma mensagem de sucesso indicando que a conexão com Athena está
 
 ```
 ├── models/
-│   ├── staging/       → Transformações iniciais (views por padrão)
-│   ├── intermediate/  → Transformações intermediárias (tables)
-│   └── marts/         → Modelos finais de negócio (tables)
-├── tests/             → Testes de qualidade de dados (SQL, dbt)
-├── seeds/             → Dados estáticos (CSVs)
-├── macros/            → Macros e funções reutilizáveis
-├── snapshots/         → Histórico de mudanças
-├── analyses/          → Análises ad-hoc (não são materializadas)
-├── dbt_project.yml    → Configurações do projeto
-├── profiles.yml       → Conexão com Athena (⚠️ gitignored)
-└── .env               → Variáveis de ambiente (⚠️ gitignored)
+│   └── camara/                          → Modelos por assunto
+│       ├── votacoes/
+│       │   ├── staging/                 → Views iniciais
+│       │   ├── intermediate/            → Tables de transformação
+│       │   └── marts/                   → Tables finais (fatos/dimensões)
+│       ├── frentes/
+│       │   ├── staging/
+│       │   ├── intermediate/
+│       │   └── marts/
+│       ├── deputados/
+│       │   ├── staging/
+│       │   ├── intermediate/
+│       │   └── marts/
+│       └── despesas/
+│           ├── staging/
+│           ├── intermediate/
+│           └── marts/
+├── tests/                               → Testes de qualidade de dados
+├── seeds/                               → Dados estáticos (CSVs)
+├── macros/                              → Macros e funções reutilizáveis
+├── snapshots/                           → Histórico de mudanças
+├── analyses/                            → Análises ad-hoc
+├── dbt_project.yml                      → Configurações do projeto
+├── profiles.yml                         → Conexão com Athena (⚠️ gitignored)
+└── .env                                 → Variáveis de ambiente (⚠️ gitignored)
 ```
+
+**Lógica de organização:**
+- **Por Assunto (Subject)**: votacoes, frentes, deputados, despesas
+- **Por Layer**: staging (views) → intermediate (tables) → marts (tabelas finais)
 
 ---
 
@@ -125,13 +143,19 @@ dbt docs serve
 
 ## 📝 Convenções de Nomenclatura
 
-| Tipo | Padrão | Exemplo |
-|------|--------|---------|
-| Staging Models | `stg_<entidade>` | `stg_deputados` |
-| Intermediate | `int_<transformação>` | `int_deputados_agregados` |
-| Marts | `fato_<entidade>` / `dim_<entidade>` | `fato_votos`, `dim_deputados` |
-| Tests | Descritivo em snake_case | `test_id_nunca_null` |
-| Seeds | `seed_<nome>` | `seed_municipios.csv` |
+| Tipo | Padrão | Exemplo | Localização |
+|------|--------|---------|-------------|
+| Staging Models | `stg_<entidade>` | `stg_votos` | `models/camara/votacoes/staging/` |
+| Intermediate | `int_<transformação>` | `int_votos_agregados` | `models/camara/votacoes/intermediate/` |
+| Marts | `fato_<entidade>` / `dim_<entidade>` | `fato_votos`, `dim_deputados` | `models/camara/votacoes/marts/` |
+| Tests | Descritivo em snake_case | `test_id_nunca_null` | `tests/` |
+| Seeds | `seed_<nome>` | `seed_municipios.csv` | `seeds/` |
+
+**Organização de Assuntos (Subjects):**
+- `models/camara/votacoes/` - Modelos de votações
+- `models/camara/frentes/` - Modelos de frentes parlamentares
+- `models/camara/deputados/` - Modelos de deputados
+- `models/camara/despesas/` - Modelos de despesas parlamentares
 
 ---
 

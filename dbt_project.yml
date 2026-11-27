@@ -29,19 +29,57 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# In this example config, we tell dbt to build all models in the example directory
-# as tables. These settings can be overridden in the individual model files
-# using the `{{ config(...) }}` macro.
+# Models organized by subject (assunto) → then by layer (staging, intermediate, marts)
 models:
   camara_senado_data_transformation:
-    # Config indicated by + and applies to all files under models/
+    # Default: views
     materialized: view
-    staging:
-      materialized: view
-      +tags: "staging"
-    intermediate:
-      materialized: table
-      +tags: "intermediate"
-    marts:
-      materialized: table
-      +tags: "marts"
+
+    camara:
+      # Votações models
+      votacoes:
+        staging:
+          materialized: view
+          +tags: ["staging", "votacoes"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "votacoes"]
+        marts:
+          materialized: table
+          +tags: ["marts", "votacoes"]
+
+      # Frentes models
+      frentes:
+        staging:
+          materialized: view
+          +tags: ["staging", "frentes"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "frentes"]
+        marts:
+          materialized: table
+          +tags: ["marts", "frentes"]
+
+      # Deputados models
+      deputados:
+        staging:
+          materialized: view
+          +tags: ["staging", "deputados"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "deputados"]
+        marts:
+          materialized: table
+          +tags: ["marts", "deputados"]
+
+      # Despesas models
+      despesas:
+        staging:
+          materialized: view
+          +tags: ["staging", "despesas"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "despesas"]
+        marts:
+          materialized: table
+          +tags: ["marts", "despesas"]
