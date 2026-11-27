@@ -158,21 +158,40 @@ Os modelos estão organizados por **assunto (subject)** e depois por **layer**:
 
 ```
 models/camara/
-├── votacoes/
-│   ├── staging/       → Transformações iniciais (views)
-│   ├── intermediate/  → Transformações intermediárias (tables)
-│   └── marts/         → Tabelas finais - fatos e dimensões
-├── frentes/           → Modelos de frentes parlamentares
-├── deputados/         → Modelos de deputados
-└── despesas/          → Modelos de despesas
+├── blocos/            → Blocos parlamentares
+├── deputados/         → Dados dos deputados
+├── eventos/           → Eventos parlamentares
+├── frentes/           → Frentes parlamentares
+├── grupos/            → Grupos parlamentares
+├── legislaturas/      → Legislaturas
+├── orgaos/            → Órgãos parlamentares
+├── partidos/          → Partidos políticos
+├── proposicoes/       → Proposições legislativas
+└── votacoes/
+    ├── staging/       → Transformações iniciais (views)
+    ├── intermediate/  → Transformações intermediárias (tables)
+    └── marts/         → Tabelas finais - fatos e dimensões
 ```
 
 **Executar por assunto:**
 ```bash
 dbt run --select tag:votacoes
 dbt run --select tag:deputados
+dbt run --select tag:proposicoes
 dbt test --select tag:frentes
 ```
+
+**10 Temas disponíveis:**
+1. blocos
+2. deputados
+3. eventos
+4. frentes
+5. grupos
+6. legislaturas
+7. orgaos
+8. partidos
+9. proposicoes
+10. votacoes
 
 ---
 

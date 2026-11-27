@@ -70,7 +70,7 @@ Você deve ver uma mensagem de sucesso indicando que a conexão com Athena está
 ```
 
 **Lógica de organização:**
-- **Por Assunto (Subject)**: votacoes, frentes, deputados, despesas
+- **Por Assunto (Subject)**: 10 temas (blocos, deputados, eventos, frentes, grupos, legislaturas, orgaos, partidos, proposicoes, votacoes)
 - **Por Layer**: staging (views) → intermediate (tables) → marts (tabelas finais)
 
 ---
@@ -152,10 +152,16 @@ dbt docs serve
 | Seeds | `seed_<nome>` | `seed_municipios.csv` | `seeds/` |
 
 **Organização de Assuntos (Subjects):**
-- `models/camara/votacoes/` - Modelos de votações
-- `models/camara/frentes/` - Modelos de frentes parlamentares
-- `models/camara/deputados/` - Modelos de deputados
-- `models/camara/despesas/` - Modelos de despesas parlamentares
+- `models/camara/blocos/` - Blocos parlamentares
+- `models/camara/deputados/` - Dados dos deputados
+- `models/camara/eventos/` - Eventos parlamentares
+- `models/camara/frentes/` - Frentes parlamentares
+- `models/camara/grupos/` - Grupos parlamentares
+- `models/camara/legislaturas/` - Legislaturas
+- `models/camara/orgaos/` - Órgãos parlamentares
+- `models/camara/partidos/` - Partidos políticos
+- `models/camara/proposicoes/` - Proposições legislativas
+- `models/camara/votacoes/` - Votações parlamentares
 
 ---
 

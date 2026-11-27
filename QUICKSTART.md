@@ -79,19 +79,25 @@ aws s3 ls s3://dataplatform-senado-dev-db/athena-results/
 ## 📊 Estrutura de Pastas
 
 ```
-models/
-  └── camara/
-      ├── votacoes/
-      │   ├── staging/       → Views de transformações iniciais
-      │   ├── intermediate/  → Tables de transformações intermediárias
-      │   └── marts/         → Tables finais (fatos e dimensões)
-      ├── frentes/
-      ├── deputados/
-      └── despesas/
-           (mesma estrutura para cada assunto)
-tests/                       → Testes de qualidade (SQL e dbt)
-seeds/                       → Arquivos CSV estáticos
-macros/                      → Funções e helpers reutilizáveis
+models/camara/
+  ├── blocos/               → Blocos parlamentares
+  ├── deputados/            → Dados dos deputados
+  ├── eventos/              → Eventos parlamentares
+  ├── frentes/              → Frentes parlamentares
+  ├── grupos/               → Grupos parlamentares
+  ├── legislaturas/         → Legislaturas
+  ├── orgaos/               → Órgãos parlamentares
+  ├── partidos/             → Partidos políticos
+  ├── proposicoes/          → Proposições legislativas
+  └── votacoes/             → Votações
+      ├── staging/          → Views de transformações iniciais
+      ├── intermediate/     → Tables de transformações intermediárias
+      └── marts/            → Tables finais (fatos e dimensões)
+      (mesma estrutura para cada assunto)
+      
+tests/                      → Testes de qualidade (SQL e dbt)
+seeds/                      → Arquivos CSV estáticos
+macros/                     → Funções e helpers reutilizáveis
 ```
 
 ---

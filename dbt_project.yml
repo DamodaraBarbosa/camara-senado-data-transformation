@@ -72,14 +72,86 @@ models:
           materialized: table
           +tags: ["marts", "deputados"]
 
-      # Despesas models
-      despesas:
+      # Blocos models
+      blocos:
         staging:
           materialized: view
-          +tags: ["staging", "despesas"]
+          +tags: ["staging", "blocos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "despesas"]
+          +tags: ["intermediate", "blocos"]
         marts:
           materialized: table
-          +tags: ["marts", "despesas"]
+          +tags: ["marts", "blocos"]
+
+      # Eventos models
+      eventos:
+        staging:
+          materialized: view
+          +tags: ["staging", "eventos"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "eventos"]
+        marts:
+          materialized: table
+          +tags: ["marts", "eventos"]
+
+      # Grupos models
+      grupos:
+        staging:
+          materialized: view
+          +tags: ["staging", "grupos"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "grupos"]
+        marts:
+          materialized: table
+          +tags: ["marts", "grupos"]
+
+      # Legislaturas models
+      legislaturas:
+        staging:
+          materialized: view
+          +tags: ["staging", "legislaturas"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "legislaturas"]
+        marts:
+          materialized: table
+          +tags: ["marts", "legislaturas"]
+
+      # Órgãos models
+      orgaos:
+        staging:
+          materialized: view
+          +tags: ["staging", "orgaos"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "orgaos"]
+        marts:
+          materialized: table
+          +tags: ["marts", "orgaos"]
+
+      # Partidos models
+      partidos:
+        staging:
+          materialized: view
+          +tags: ["staging", "partidos"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "partidos"]
+        marts:
+          materialized: table
+          +tags: ["marts", "partidos"]
+
+      # Proposições models
+      proposicoes:
+        staging:
+          materialized: view
+          +tags: ["staging", "proposicoes"]
+        intermediate:
+          materialized: table
+          +tags: ["intermediate", "proposicoes"]
+        marts:
+          materialized: table
+          +tags: ["marts", "proposicoes"]
