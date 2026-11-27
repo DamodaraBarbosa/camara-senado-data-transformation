@@ -30,6 +30,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
 # Models organized by subject (assunto) → then by layer (staging, intermediate, marts)
+# Tags are defined at the model level (subject), not at the layer level
 models:
   camara_senado_data_transformation:
     # Default: views
@@ -38,120 +39,100 @@ models:
     camara:
       # Votações models
       votacoes:
+        +tags: ["camara", "votacoes"]
         staging:
           materialized: view
-          +tags: ["staging", "votacoes"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "votacoes"]
         marts:
           materialized: table
-          +tags: ["marts", "votacoes"]
 
       # Frentes models
       frentes:
+        +tags: ["camara", "frentes"]
         staging:
           materialized: view
-          +tags: ["staging", "frentes"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "frentes"]
         marts:
           materialized: table
-          +tags: ["marts", "frentes"]
 
       # Deputados models
       deputados:
+        +tags: ["camara", "deputados"]
         staging:
           materialized: view
-          +tags: ["staging", "deputados"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "deputados"]
         marts:
           materialized: table
-          +tags: ["marts", "deputados"]
 
       # Blocos models
       blocos:
+        +tags: ["camara", "blocos"]
         staging:
           materialized: view
-          +tags: ["staging", "blocos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "blocos"]
         marts:
           materialized: table
-          +tags: ["marts", "blocos"]
 
       # Eventos models
       eventos:
+        +tags: ["camara", "eventos"]
         staging:
           materialized: view
-          +tags: ["staging", "eventos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "eventos"]
         marts:
           materialized: table
-          +tags: ["marts", "eventos"]
 
       # Grupos models
       grupos:
+        +tags: ["camara", "grupos"]
         staging:
           materialized: view
-          +tags: ["staging", "grupos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "grupos"]
         marts:
           materialized: table
-          +tags: ["marts", "grupos"]
 
       # Legislaturas models
       legislaturas:
+        +tags: ["camara", "legislaturas"]
         staging:
           materialized: view
-          +tags: ["staging", "legislaturas"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "legislaturas"]
         marts:
           materialized: table
-          +tags: ["marts", "legislaturas"]
 
       # Órgãos models
       orgaos:
+        +tags: ["camara", "orgaos"]
         staging:
           materialized: view
-          +tags: ["staging", "orgaos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "orgaos"]
         marts:
           materialized: table
-          +tags: ["marts", "orgaos"]
 
       # Partidos models
       partidos:
+        +tags: ["camara", "partidos"]
         staging:
           materialized: view
-          +tags: ["staging", "partidos"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "partidos"]
         marts:
           materialized: table
-          +tags: ["marts", "partidos"]
 
       # Proposições models
       proposicoes:
+        +tags: ["camara", "proposicoes"]
         staging:
           materialized: view
-          +tags: ["staging", "proposicoes"]
         intermediate:
           materialized: table
-          +tags: ["intermediate", "proposicoes"]
         marts:
           materialized: table
-          +tags: ["marts", "proposicoes"]
